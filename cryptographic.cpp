@@ -3,18 +3,15 @@
 #include <iterator>
 #include <random>
 #include <utility>
+#include <fstream>
 
-void ciphering(std::string words)
-{
-    
-}
 std::map<char,char> makeCypher()
 {
     std::map<char,char> mapCypher;
     std::string word, cypher; 
     
     std::generate_n(std::back_insert_iterator<std::string>(word),94,
-                    [n=32]() mutable {return ++n;});
+                    [n=31]() mutable {return ++n;});
     cypher = word;
     std::random_device rd;
     std::mt19937 g(rd());
@@ -67,9 +64,24 @@ std::string decryption(std::string cyphredWords, std::map<char,char> mapCypher)
         auto letter = keyMap.find(it);
         if(letter != keyMap.end())
         {
-            std::cout << letter->first << "\t" << letter->second << std::endl;
-            //decryptedWords += letter->second;
+            decryptedWords += letter->second;
         }
     }
-    return cyphredWords;
+    return decryptedWords;
+}
+std::string encryptionFile(const std::string fileName, std::map<char,char> mapCypher)
+{
+    std::string encrypted;
+    std::ifstream file(fileName, std::ios_base::in);
+    if(file.is_open())
+    {
+        std::string line;
+        while(!file.eof())
+        {
+            std::getline(file,line);
+            encrypted += encryption(line,mapCypher);
+        }
+    }
+    file.close();
+    return encrypted;
 }
