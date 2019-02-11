@@ -1,0 +1,9 @@
+os: linux
+language: cpp
+compiler: 
+    - clang++
+script:
+    - clang++ cryptographic.cpp main.cpp -Wall -Wextra -Werror -Wpedantic -std=c++17 -o test
+    - ./test
+after_script:
+    - rm file1.txt file2.txt file3.txt
