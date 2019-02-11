@@ -69,28 +69,43 @@ std::string decrypt(std::string cyphredWords, std::map<char,char> mapCypher)
     }
     return decryptedWords;
 }
-std::string encryptFile(const std::string fileName, std::map<char,char> mapCypher)
+
+void saveToFile(const std::string fileName,std::string data, std::map<char,char> mapCypher, std::function<std::string (std::string, std::map<char,char>)> decryptEncrypt)
 {
-    std::string encrypted;
+    
+    std::ofstream file(fileName, std::ios::out | std::ios_base::app);
+    if(file.is_open())
+    {
+        if(decryptEncrypt != nullptr)
+        {
+            file << decryptEncrypt(data,mapCypher); 
+        }
+        else
+        {
+            file << data;
+        }
+    }
+    file.close();
+}
+std::string loadFromFile(const std::string fileName, std::map<char,char> mapCypher, std::function<std::string (std::string, std::map<char,char>)> decryptEncrypt)
+{
+    std::string data;
     std::ifstream file(fileName, std::ios_base::in);
     if(file.is_open())
     {
         std::string line;
         while(!file.eof())
         {
-            std::getline(file,line);
-            encrypted += encrypt(line,mapCypher);
+            std::getline(file, line);
+            if(decryptEncrypt != nullptr)
+            {
+                data += decryptEncrypt(line, mapCypher);
+            }
+            else
+            {
+                data += line;
+            }
         }
     }
-    file.close();
-    return encrypted;
-}
-void saveToFile(const std::string fileName,std::string data, std::map<char,char> mapCypher, std::function<std::string (std::string, std::map<char,char>)> decryptORencrypt)
-{
-    std::ofstream file(fileName, std::ios::out | std::ios_base::app);
-    if(file.is_open())
-    {
-       file << decryptORencrypt(data,mapCypher); 
-    }
-    file.close();
+    return data;
 }
