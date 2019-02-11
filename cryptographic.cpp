@@ -31,7 +31,7 @@ void showKeysMap(std::map<char,char> &keysMap)
         std::cout << "{ " << key.first << " , " << key.second << " } ";
     std::cout << std::endl;
 }
-std::string encryption(std::string words, std::map<char,char> mapCypher)
+std::string encrypt(std::string words, std::map<char,char> mapCypher)
 {
     std::string encryptedWords;
     for(auto it : words)
@@ -55,7 +55,7 @@ std::map<char,char> swapKeyWithValue(std::map<char,char> mapCypher)
     }
     return decryptedMap;
 }
-std::string decryption(std::string cyphredWords, std::map<char,char> mapCypher)
+std::string decrypt(std::string cyphredWords, std::map<char,char> mapCypher)
 {
     std::string decryptedWords;
     std::map<char,char> keyMap = swapKeyWithValue(mapCypher);
@@ -69,7 +69,7 @@ std::string decryption(std::string cyphredWords, std::map<char,char> mapCypher)
     }
     return decryptedWords;
 }
-std::string encryptionFile(const std::string fileName, std::map<char,char> mapCypher)
+std::string encryptFile(const std::string fileName, std::map<char,char> mapCypher)
 {
     std::string encrypted;
     std::ifstream file(fileName, std::ios_base::in);
@@ -79,9 +79,18 @@ std::string encryptionFile(const std::string fileName, std::map<char,char> mapCy
         while(!file.eof())
         {
             std::getline(file,line);
-            encrypted += encryption(line,mapCypher);
+            encrypted += encrypt(line,mapCypher);
         }
     }
     file.close();
     return encrypted;
+}
+void saveToFile(const std::string fileName,std::string data, std::map<char,char> mapCypher, std::function<std::string (std::string, std::map<char,char>)> decryptORencrypt)
+{
+    std::ofstream file(fileName, std::ios::out | std::ios_base::app);
+    if(file.is_open())
+    {
+       file << decryptORencrypt(data,mapCypher); 
+    }
+    file.close();
 }
